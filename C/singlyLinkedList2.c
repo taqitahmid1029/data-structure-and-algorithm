@@ -5,17 +5,17 @@ struct Node
 {
     int data;
     struct Node *next;
-};    
+};
 
-void printList(struct Node **head)
+void printList(struct Node *head)
 {
-    if (*head == NULL)
+    if (head == NULL)
     {
         printf("empty list\n");
     }
     else
     {
-        struct Node *temp = *head;
+        struct Node *temp = head;
         while (temp != NULL)
         {
             printf("%d -> ", temp->data);
@@ -25,82 +25,82 @@ void printList(struct Node **head)
     }
 }
 
-int numberOfNodes(struct Node **head)
+int numberOfNodes(struct Node *head)
 {
-    if (*head == NULL)
+    if (head == NULL)
         return 0;
-    else    
+    else
     {
         int nodes = 1;
-        struct Node *temp = *head;
+        struct Node *temp = head;
         while (temp->next != NULL)
         {
             temp = temp->next;
             nodes++;
-        }    
+        }
         return nodes;
-    }    
-}    
-
-void insertBegin(struct Node **head, int value)
-{
-    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
-    if (newNode == NULL)
-    {
-        printf("node allocation failed in insertBegin()\n");
-        return;
     }
-    newNode->data = value;
-    if (*head == NULL)
-    {
-        newNode->next = NULL;
-    }
-    else
-    {
-        newNode->next = *head;
-    }
-    *head = newNode;
 }
 
-void insertEnd(struct Node **head, int value)
+struct Node *insertBegin(struct Node *head, int value)
 {
     struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
     if (newNode == NULL)
     {
-        printf("node allocation failed in insertEnd()\n");
-        return;
+        printf("node allocation failed in insertMiddle()\n");
+        return head;
+    }
+    newNode->data = value;
+    if (head == NULL)
+        newNode->next = NULL;
+    else
+        newNode->next = head;
+    return newNode;
+}
+
+struct Node *insertEnd(struct Node *head, int value)
+{
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL)
+    {
+        printf("node allocation failed in insertMiddle()\n");
+        return head;
     }
     newNode->data = value;
     newNode->next = NULL;
-    if (*head == NULL)
+    if (head == NULL)
     {
-        *head = newNode;
+        return newNode;
     }
     else
     {
-        struct Node *temp = *head;
+        struct Node *temp = head;
         while (temp->next != NULL)
         {
             temp = temp->next;
         }
         temp->next = newNode;
+        return head;
     }
 }
 
-void insertMiddle(struct Node **head, int position, int value)
+struct Node *insertMiddle(struct Node *head, int position, int value)
 {
     int nodes = numberOfNodes(head);
     if (position < 1 || position > nodes + 1)
     {
         printf("Error: Insert middle in position: %d. But list has %d nodes\n", position, nodes);
+        return head;
     }
     else if (position == 1)
     {
-        insertBegin(head, value);
+        // printf("Try calling insertBegin() for data %d\n", value);
+        return insertBegin(head, value);
     }
     else if (position == nodes + 1)
     {
-        insertEnd(head, value);
+        // printf("Try calling insertEnd() for data %d\n", value);
+        return insertEnd(head, value);
     }
     else
     {
@@ -108,72 +108,75 @@ void insertMiddle(struct Node **head, int position, int value)
         if (newNode == NULL)
         {
             printf("node allocation failed in insertMiddle()\n");
-            return;
+            return head;
         }
         newNode->data = value;
-        newNode->next = NULL;
-        struct Node *temp = *head;
-
+        struct Node *temp = head;
         for (int i = 1; i < position - 1; i++)
         {
             temp = temp->next;
         }
         newNode->next = temp->next;
         temp->next = newNode;
+        return head;
     }
 }
 
-void deleteBegin(struct Node **head)
+struct Node *deleteBegin(struct Node *head)
 {
-    if (*head != NULL)
+    if (head != NULL)
     {
-        struct Node *temp = *head;
-        *head = temp->next;
-        free(temp);
+        struct Node *temp = head->next;
+        free(head);
+        return temp;
     }
 }
 
-void deleteEnd(struct Node **head)
+struct Node *deleteEnd(struct Node *head)
 {
-    if (*head == NULL)
+    if (head == NULL)
     {
-        return;
+        return head;
     }
-    else if ((*head)->next == NULL)
+    else if (head->next == NULL)
     {
-        free(*head);
-        *head = NULL;
+        free(head);
+        return NULL;
     }
     else
     {
-        struct Node *temp = *head;
+        struct Node *temp = head;
         while (temp->next->next != NULL)
         {
             temp = temp->next;
         }
         free(temp->next);
         temp->next = NULL;
+        return head;
     }
 }
 
-void deleteMiddle(struct Node **head, int position)
+struct Node *deleteMiddle(struct Node *head, int position)
 {
     int nodes = numberOfNodes(head);
     if (position < 1 || position > nodes)
     {
         printf("Error: Delete middle in position: %d. But list has %d nodes\n", position, nodes);
+        return head;
     }
     else if (position == 1)
     {
-        deleteBegin(head);
+        printf("Try calling deleteBegin()\n");
+        return deleteBegin(head);
     }
     else if (position == nodes)
     {
-        deleteEnd(head);
+        printf("Try calling deleteEnd()\n");
+        return head;
     }
     else
     {
-        struct Node *temp = *head;
+        struct Node *temp = head;
         for (int i = 1; i < position - 1; i++)
         {
             temp = temp->next;
@@ -181,40 +184,41 @@ void deleteMiddle(struct Node **head, int position)
         struct Node *del = temp->next;
         temp->next = del->next;
         free(del);
+        return head;
     }
 }
 
-void deleteList(struct Node **head)
+struct Node *deleteList(struct Node *head)
 {
-    while (*head != NULL)
+    while (head != NULL)
     {
-        struct Node *temp = *head;
-        *head = temp->next;
+        struct Node *temp = head;
+        head = temp->next;
         free(temp);
     }
-    *head = NULL;
+    return NULL;
 }
 
 int main()
 {
     struct Node *head = NULL;
-    printList(&head);
+    printList(head);
 
-    insertBegin(&head, 10);
-    insertBegin(&head, 9);
-    insertEnd(&head, 14);
-    insertEnd(&head, 15);
-    insertMiddle(&head, 4, 12);
-    insertMiddle(&head, 5, 13);
-    printList(&head);
+    head = insertBegin(head, 12);
+    head = insertBegin(head, 9);
+    head = insertBegin(head, 8);
+    head = insertMiddle(head, 3, 10);
+    head = insertMiddle(head, 4, 11);
+    head = insertEnd(head, 13);
+    head = insertEnd(head, 14);
+    printList(head);
 
-    deleteMiddle(&head, 3);
-    deleteBegin(&head);
-    deleteEnd(&head);
-    printList(&head);
+    head = deleteBegin(head);
+    head = deleteMiddle(head, 3);
+    head = deleteEnd(head);
+    printList(head);
 
-    deleteList(&head);
-    printList(&head);
-
+    head = deleteList(head);
+    printList(head);
     return 0;
 }
