@@ -94,12 +94,10 @@ struct Node *insertMiddle(struct Node *head, int position, int value)
     }
     else if (position == 1)
     {
-        // printf("Try calling insertBegin() for data %d\n", value);
         return insertBegin(head, value);
     }
     else if (position == nodes + 1)
     {
-        // printf("Try calling insertEnd() for data %d\n", value);
         return insertEnd(head, value);
     }
     else
