@@ -9,7 +9,7 @@ public:
     Node *next;
 };
 
-class List
+struct List
 {
 private:
     Node *head, *tail;
@@ -41,7 +41,7 @@ public:
                 cout << temp->data << " -> ";
                 temp = temp->next;
             }
-            cout << temp->data << endl;
+            cout << temp->data << " -> [back to head: " << temp->next->data << "]" << endl;
         }
     }
 
@@ -51,12 +51,13 @@ public:
         newNode->data = value;
         if (head == NULL)
         {
-            newNode->next = NULL;
+            newNode->next = newNode;
             head = tail = newNode;
         }
         else
         {
             newNode->next = head;
+            tail->next = newNode;
             head = newNode;
         }
         nodes++;
@@ -66,13 +67,14 @@ public:
     {
         Node *newNode = new Node;
         newNode->data = value;
-        newNode->next = NULL;
         if (head == NULL)
         {
+            newNode->next = newNode;
             head = tail = newNode;
         }
         else
         {
+            newNode->next = head;
             tail->next = newNode;
             tail = newNode;
         }
@@ -81,7 +83,7 @@ public:
 
     void insertMiddle(int position, int value)
     {
-        if (position < 1 || position > nodes + 1)
+        if (1 > position || position > nodes + 1)
         {
             cout << "Error: Insert middle in position: " << position << ". But list has " << nodes << " nodes" << endl;
         }
@@ -114,7 +116,7 @@ public:
         {
             return;
         }
-        else if (head->next == NULL)
+        else if (head == tail)
         {
             delete head;
             head = tail = NULL;
@@ -123,6 +125,7 @@ public:
         else
         {
             Node *temp = head;
+            tail->next = head->next;
             head = head->next;
             delete temp;
             nodes--;
@@ -135,7 +138,7 @@ public:
         {
             return;
         }
-        else if (head->next = NULL)
+        else if (head == tail)
         {
             delete head;
             head = tail = NULL;
@@ -148,16 +151,16 @@ public:
             {
                 temp = temp->next;
             }
-            temp->next = NULL;
             delete tail;
             tail = temp;
+            tail->next = head;
             nodes--;
         }
     }
 
     void deleteMiddle(int position)
     {
-        if (position < 1 || position > nodes)
+        if (1 > position || position > nodes)
         {
             cout << "Error: Delete middle in position: " << position << ". But list has " << nodes << " nodes" << endl;
         }
@@ -185,14 +188,30 @@ public:
 
     void deleteList()
     {
-        while (head != NULL)
+        if (head == NULL)
         {
-            Node *temp = head;
-            head = temp->next;
-            delete temp;
+            return;
         }
-        head = tail = NULL;
-        nodes = 0;
+        else if (head == tail)
+        {
+            delete head;
+            head = tail = NULL;
+            nodes = 0;
+        }
+        else
+        {
+            Node *temp = head->next;
+            while (temp != tail)
+            {
+                Node *del = temp;
+                temp = temp->next;
+                delete del;
+            }
+            delete temp;
+            delete head;
+            head = tail = NULL;
+            nodes = 0;
+        }
     }
 };
 
@@ -200,6 +219,7 @@ int main()
 {
     List myList;
     myList.printList();
+
     myList.insertBegin(11);
     myList.insertBegin(10);
     myList.insertEnd(14);
@@ -210,7 +230,7 @@ int main()
 
     myList.deleteBegin();
     myList.deleteEnd();
-    myList.deleteMiddle(2);
+    myList.deleteMiddle(3);
     myList.printList();
 
     myList.deleteList();

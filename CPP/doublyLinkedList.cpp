@@ -5,6 +5,7 @@ using namespace std;
 class Node
 {
 public:
+    Node *prev;
     int data;
     Node *next;
 };
@@ -36,18 +37,19 @@ public:
         else
         {
             Node *temp = head;
-            while (temp != tail)
+            while (temp != NULL)
             {
                 cout << temp->data << " -> ";
                 temp = temp->next;
             }
-            cout << temp->data << endl;
+            cout << "NULL" << endl;
         }
     }
 
     void insertBegin(int value)
     {
         Node *newNode = new Node;
+        newNode->prev = NULL;
         newNode->data = value;
         if (head == NULL)
         {
@@ -57,6 +59,7 @@ public:
         else
         {
             newNode->next = head;
+            head->prev = newNode;
             head = newNode;
         }
         nodes++;
@@ -69,11 +72,13 @@ public:
         newNode->next = NULL;
         if (head == NULL)
         {
+            newNode->prev = NULL;
             head = tail = newNode;
         }
         else
         {
             tail->next = newNode;
+            newNode->prev = tail;
             tail = newNode;
         }
         nodes++;
@@ -102,7 +107,9 @@ public:
             {
                 temp = temp->next;
             }
+            newNode->prev = temp;
             newNode->next = temp->next;
+            temp->next->prev = newNode;
             temp->next = newNode;
             nodes++;
         }
@@ -122,9 +129,10 @@ public:
         }
         else
         {
-            Node *temp = head;
-            head = head->next;
-            delete temp;
+            Node *temp = head->next;
+            temp->prev = NULL;
+            delete head;
+            head = temp;
             nodes--;
         }
     }
@@ -135,7 +143,7 @@ public:
         {
             return;
         }
-        else if (head->next = NULL)
+        else if (head->next == NULL)
         {
             delete head;
             head = tail = NULL;
@@ -148,9 +156,9 @@ public:
             {
                 temp = temp->next;
             }
-            temp->next = NULL;
             delete tail;
             tail = temp;
+            tail->next = NULL;
             nodes--;
         }
     }
@@ -178,6 +186,7 @@ public:
             }
             Node *del = temp->next;
             temp->next = del->next;
+            del->next->prev = temp;
             delete del;
             nodes--;
         }
@@ -185,12 +194,13 @@ public:
 
     void deleteList()
     {
-        while (head != NULL)
+        while (head != tail)
         {
             Node *temp = head;
-            head = temp->next;
+            head = head->next;
             delete temp;
         }
+        delete head;
         head = tail = NULL;
         nodes = 0;
     }
@@ -200,6 +210,7 @@ int main()
 {
     List myList;
     myList.printList();
+
     myList.insertBegin(11);
     myList.insertBegin(10);
     myList.insertEnd(14);
@@ -210,7 +221,7 @@ int main()
 
     myList.deleteBegin();
     myList.deleteEnd();
-    myList.deleteMiddle(2);
+    myList.deleteMiddle(3);
     myList.printList();
 
     myList.deleteList();
