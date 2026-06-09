@@ -36,7 +36,7 @@ int peek(Node *top)
     if (top == NULL)
     {
         printf("Error: Stack is empty. Cannot peek.\n");
-        return -1;  // Return sentinel value for empty stack
+        return -1;
     }
     return top->data;
 }
@@ -50,12 +50,10 @@ int main()
 {
     Node *top = NULL;
     
-    // Push elements
     top = push(top, 1);
     top = push(top, 2);
     top = push(top, 3);
     
-    // Pop and print elements (LIFO order)
     while (!isEmpty(top))
     {
         printf("%d ", peek(top));
